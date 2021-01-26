@@ -1,3 +1,7 @@
+#Other
+.DS_Store
+*.lss
+
 # Prerequisites
 *.d
 
@@ -37,7 +41,6 @@
 *.hex
 
 # Debug files
-Debug
 *.dSYM/
 *.su
 *.idb
