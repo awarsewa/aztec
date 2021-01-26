@@ -1,2 +1,2 @@
 # aztec
-Bringing an old pinball machine back to life
+Bringing a 1976 pinball machine back to life
