@@ -37,6 +37,4 @@ extern trigger coinUnitResetTrigger;
 void coinUnitStepUpTriggerFunc(uint8_t state);
 void coinUnitResetTriggerFunc(uint8_t state);
 
-extern void recursionBreaker(struct mb* sw, uint8_t state);
-
 #endif /* _bonus_unit_h_ */

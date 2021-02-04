@@ -61,8 +61,6 @@ void scoreMotorTriggerFunc(uint8_t state);
 ISR(TIMER1_COMPA_vect);
 extern volatile uint8_t motorFlag;
 
-extern void recursionBreaker(struct mb* sw, uint8_t state);
-
 void scoreMotorTurn();
 
 

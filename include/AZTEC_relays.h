@@ -176,8 +176,4 @@ extern relay5 relay_25ct;
 
 extern relay* red_relays[NUM_RED_RELAYS];
 
-extern void recursionBreaker(struct mb* sw, uint8_t state);
-
-//void init_aztec_relays(void);
-
 #endif

@@ -223,7 +223,7 @@ extern shiftReg outRegs[NUM_OUTPUT_REGS];
 
 void relay_init(void);
 
-// Connect / disconnect switches
+// Open / close switches
 void switchOn(struct mb *sw);
 void switchOff(struct mb *sw);
 

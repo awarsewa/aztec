@@ -65,8 +65,8 @@ void bonusUnitStepUpTriggerFunc(uint8_t state)
     switch(bonusUnitDiskPos){
         case BONUS_UNIT_DISK_POS_5000:
             outRegs[BONUS_UNIT_REGISTER].data |= (1 << BONUS_1);
-            recursionBreaker(toSwitchPtr(&sw_bonusUnitZeroPos), 0);
-            recursionBreaker(toSwitchPtr(&sw_bonusUnitOpenAtZero), 0);
+            switchOff(toSwitchPtr(&sw_bonusUnitZeroPos));
+            switchOff(toSwitchPtr(&sw_bonusUnitOpenAtZero));
             break;
         case BONUS_UNIT_DISK_POS_10000:
             outRegs[BONUS_UNIT_REGISTER].data |= (1 << BONUS_GND) | (1 << BONUS_2) | (1 << BONUS_3) | (1 << BONUS_4) | (1 << BONUS_5);
@@ -116,8 +116,8 @@ void bonusUnitResetTriggerFunc(uint8_t state)
     
     switch(bonusUnitDiskPos){
         case BONUS_UNIT_DISK_POS_0:
-            recursionBreaker(toSwitchPtr(&sw_bonusUnitZeroPos), 1);
-            recursionBreaker(toSwitchPtr(&sw_bonusUnitOpenAtZero), 1);
+            switchOn(toSwitchPtr(&sw_bonusUnitZeroPos));
+            switchOn(toSwitchPtr(&sw_bonusUnitOpenAtZero));
             break;
         case BONUS_UNIT_DISK_POS_5000:
             outRegs[BONUS_UNIT_REGISTER].data |= (1 << BONUS_1);

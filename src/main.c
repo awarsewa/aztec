@@ -136,92 +136,18 @@ void init_hardware(void)
     TIFR1 |= (1 << OCF1A); TIMSK1 |= (1 << OCIE1A);
 }
 
-/*
- // Connect / disconnect switches
- void switchOn(struct mb *sw, struct mb** on, struct mb** off, uint8_t* n_on, uint8_t* n_off, uint8_t* traceFlag);
- void switchOff(struct mb *sw,struct mb** on, struct mb** off, uint8_t* n_on, uint8_t* n_off, uint8_t* traceFlag);
- 
- // Trace switches sourcing power to their destination coil
- void switchTraceOn(struct mb *sw, struct mb** on, uint8_t* n_on, uint8_t* traceFlag);
- void switchTraceOff(struct mb *sw, struct mb** off, uint8_t* n_off, uint8_t* traceFlag);
- */
-
-
-void recursionBreaker(struct mb* sw, uint8_t state)
-{
-	if(state)
-		switchOn(sw);
-	else
-		switchOff(sw);
-	/*
-    struct swInfo info, dummy;
-    uint8_t i = 0;
-    
-    info.n_on = info.n_off = info.traceFlag = 0;
-    info.on = info.off = NULL;
-    
-    // load first stuff into info
-    if(state){
-        info.on = sw;
-        info.n_on = 1;
-    } else {
-        info.off = sw;
-        info.n_off = 1;
-    }
-    queue_push(&swInfoQueue, (uint8_t*)&info);
-    
-    while(!queue_isempty(&swInfoQueue)){
-        queue_pop(&swInfoQueue, (uint8_t*)&info);
-        
-        if(info.n_on){
-            for(i = 0; i < info.n_on; i++){
-                // Reset dummy struct
-                dummy.n_on = dummy.n_off = dummy.traceFlag = 0;
-                dummy.on = dummy.off = NULL;
-                
-                if(info.traceFlag)
-                    switchTraceOn(info.on + sizeof(struct mb*)*i, &dummy.on, &dummy.n_on, &dummy.traceFlag);
-                else
-                    switchOn(info.on + sizeof(struct mb*)*i, &dummy.on, &dummy.off, &dummy.n_on, &dummy.n_off, &dummy.traceFlag);
-                if(dummy.n_on || dummy.n_off)
-                    queue_push(&swInfoQueue, (uint8_t*)&dummy);
-            }
-        }
-        
-        if(info.n_off){
-            for(i = 0; i < info.n_off; i++){
-                // Reset dummy struct
-                dummy.n_on = dummy.n_off = dummy.traceFlag = 0;
-                dummy.on = dummy.off = NULL;
-                
-                if(info.traceFlag)
-                    switchTraceOff(info.off + sizeof(struct mb*)*i, &dummy.off, &dummy.n_off, &dummy.traceFlag);
-                else
-                    switchOff(info.off + sizeof(struct mb*)*i, &dummy.on, &dummy.off, &dummy.n_on, &dummy.n_off, &dummy.traceFlag);
-                if(dummy.n_on || dummy.n_off)
-                    queue_push(&swInfoQueue, (uint8_t*)&dummy);
-            }
-        }
-    }
-    */
-}
-
-
 void aztec_init(void)
 {
-	// Init to state before game over (5 balls in play)
-	ballCountUnitDiskPos = BALL_COUNT_UNIT_DISK_POS_5;
-    //recursionBreaker(toSwitchPtr(&sw_ballCountUnitZeroBk), 0);
-	switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk));
-	//recursionBreaker(toSwitchPtr(&sw_ballCountUnitZeroBk2), 0);
-	switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk2));
-	// Trigger ball count unit step up to induce game over
-    //recursionBreaker(toSwitchPtr(&relay_ballCountUnitStepUp), 1);
-	switchOn(toSwitchPtr(&relay_ballCountUnitStepUp));
-	_delay_ms(50);
-	switchOff(toSwitchPtr(&relay_ballCountUnitStepUp));
-	//recursionBreaker(toSwitchPtr(&relay_ballCountUnitStepUp), 0);
+    // Init to state before game over (5 balls in play)
+    ballCountUnitDiskPos = BALL_COUNT_UNIT_DISK_POS_5;
+    switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk));
+    switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk2));
+    // Trigger ball count unit step up to induce game over
+    switchOn(toSwitchPtr(&relay_ballCountUnitStepUp));
+    _delay_ms(50);
+    switchOff(toSwitchPtr(&relay_ballCountUnitStepUp));
     
+    // TODO:
     // read the adjust switch settings
     
     // setup connections of sw_5ct, sw_10ctm ... accordingly
@@ -238,58 +164,58 @@ void processEvent(uint8_t src, uint8_t event, uint8_t flank)
     switch(src){
        case AZTEC_EVENT_SRC_GS1:
             switch(event){
-            	case L_LANE_ROLL_OVER:
-            		if(flank)
-            			switchOn(toSwitchPtr(&sw_leftLaneRollOver));
-            		else
-            			switchOff(toSwitchPtr(&sw_leftLaneRollOver));
-					sw = toSwitchPtr(&sw_leftLaneRollOver2);
-            		break;
-            	case E_TARGET:
-            		sw = toSwitchPtr(&sw_targetE);
-            		break;
-            	case Z_TARGET:
-            		sw = toSwitchPtr(&sw_targetZ);
-            		break;
-            	case CENTER_JET_BUMPER:
-            		sw = toSwitchPtr(&sw_centerJetBumper);
-            		break;
-            	case R_JET_BUMPER:
-            		sw = toSwitchPtr(&sw_rightJetBumper);
-            		break;
-            	case L_JET_BUMPER:
-            		sw = toSwitchPtr(&sw_leftJetBumper);
-            		break;
-            	case CENTER_TOP_ROLL_OVER:
-            		sw = toSwitchPtr(&sw_centerTopRollOver);
-            		break;
-            	case R_TOP_ROLL_OVER:
-            		sw = toSwitchPtr(&sw_rightTopRollOver);
-            		break;
-            	case L_TOP_ROLL_OVER:
-            		sw = toSwitchPtr(&sw_leftTopRollOver);
-            		break;
-            	case CENTER_TARGET:
-            		sw = toSwitchPtr(&sw_centerTarget);
-            		break;
-            	case L_TOP_TARGET:
-            		sw = toSwitchPtr(&sw_leftTopTarget);
-            		break;
-            	case L_BOT_ROLL_OVER_IN:
-            		sw = toSwitchPtr(&sw_leftBottomRollOverIn);
-            		break;
-            	case L_BOT_ROLL_OVER_OUT:
-            		sw = toSwitchPtr(&sw_leftBottomRollOverOut);
-            		break;
-            	case L_R_TOP_ROLL_OVER_BUTTON:
-            		sw = toSwitchPtr(&sw_leftRightTopRollOverButton);
-            		break;
-            	case CENTER_TOP_ROLL_OVER_BUTTON:
-            		sw = toSwitchPtr(&sw_centerTopRollOverButton);
-            		break;
-            	case SPINNER:
-            		sw = toSwitchPtr(&sw_spinner);
-            		break;
+                case L_LANE_ROLL_OVER:
+                    if(flank)
+                        switchOn(toSwitchPtr(&sw_leftLaneRollOver));
+                    else
+                        switchOff(toSwitchPtr(&sw_leftLaneRollOver));
+                    sw = toSwitchPtr(&sw_leftLaneRollOver2);
+                    break;
+                case E_TARGET:
+                    sw = toSwitchPtr(&sw_targetE);
+                    break;
+                case Z_TARGET:
+                    sw = toSwitchPtr(&sw_targetZ);
+                    break;
+                case CENTER_JET_BUMPER:
+                    sw = toSwitchPtr(&sw_centerJetBumper);
+                    break;
+                case R_JET_BUMPER:
+                    sw = toSwitchPtr(&sw_rightJetBumper);
+                    break;
+                case L_JET_BUMPER:
+                    sw = toSwitchPtr(&sw_leftJetBumper);
+                    break;
+                case CENTER_TOP_ROLL_OVER:
+                    sw = toSwitchPtr(&sw_centerTopRollOver);
+                    break;
+                case R_TOP_ROLL_OVER:
+                    sw = toSwitchPtr(&sw_rightTopRollOver);
+                    break;
+                case L_TOP_ROLL_OVER:
+                    sw = toSwitchPtr(&sw_leftTopRollOver);
+                    break;
+                case CENTER_TARGET:
+                    sw = toSwitchPtr(&sw_centerTarget);
+                    break;
+                case L_TOP_TARGET:
+                    sw = toSwitchPtr(&sw_leftTopTarget);
+                    break;
+                case L_BOT_ROLL_OVER_IN:
+                    sw = toSwitchPtr(&sw_leftBottomRollOverIn);
+                    break;
+                case L_BOT_ROLL_OVER_OUT:
+                    sw = toSwitchPtr(&sw_leftBottomRollOverOut);
+                    break;
+                case L_R_TOP_ROLL_OVER_BUTTON:
+                    sw = toSwitchPtr(&sw_leftRightTopRollOverButton);
+                    break;
+                case CENTER_TOP_ROLL_OVER_BUTTON:
+                    sw = toSwitchPtr(&sw_centerTopRollOverButton);
+                    break;
+                case SPINNER:
+                    sw = toSwitchPtr(&sw_spinner);
+                    break;
                 default:
                     break;
             }
@@ -309,26 +235,26 @@ void processEvent(uint8_t src, uint8_t event, uint8_t flank)
                     break;
                 // When player scores 10 pts. no. match alternator switch triggers change re.
                 case NUMBER_MATCH_S_U:
-                	if(flank){
-                		sw = toSwitchPtr(&sw_noMatchAlt);
-                	    if(sw_getState(toSwitchPtr(&sw_noMatchAlt)) == SWITCH_STATE_CLOSED)
-                	    	flank = 0;
-                	    switchOn(toSwitchPtr(&relay_10Pt));
-                	    switchOff(toSwitchPtr(&relay_10Pt));
-                	}
-                	break;
+                    if(flank){
+                        sw = toSwitchPtr(&sw_noMatchAlt);
+                        if(sw_getState(toSwitchPtr(&sw_noMatchAlt)) == SWITCH_STATE_CLOSED)
+                            flank = 0;
+                        switchOn(toSwitchPtr(&relay_10Pt));
+                        switchOff(toSwitchPtr(&relay_10Pt));
+                    }
+                    break;
                 case C_TARGET:
-                	sw = toSwitchPtr(&sw_targetC);
-                	break;
+                    sw = toSwitchPtr(&sw_targetC);
+                    break;
                 case T_TARGET:
-                	sw = toSwitchPtr(&sw_targetT);
-                	break;
+                    sw = toSwitchPtr(&sw_targetT);
+                    break;
                 case R_BOT_ROLL_OVER_IN:
-                	sw = toSwitchPtr(&sw_rightBottomRollOverIn);
-                	break;
+                    sw = toSwitchPtr(&sw_rightBottomRollOverIn);
+                    break;
                 case R_BOT_ROLL_OVER_OUT:
-                	sw = toSwitchPtr(&sw_rightBottomRollOverOut);
-                	break;
+                    sw = toSwitchPtr(&sw_rightBottomRollOverOut);
+                    break;
                 /*
                 case SWITCH_5_CT:
                     sw = toSwitchPtr(&sw_5ct);
@@ -350,7 +276,7 @@ void processEvent(uint8_t src, uint8_t event, uint8_t flank)
                     sw = toSwitchPtr(&sw_drumUnitZeroBk);
                     flank = flank ? 0 : 1;
                     break;
-                    
+
                 //case CREDIT_UNIT_ZERO_BK:
                 //    sw = toSwitchPtr(&sw_creditUnitZeroBk);
                 //    flank = flank ? 0 : 1;
@@ -378,72 +304,71 @@ void processEvent(uint8_t src, uint8_t event, uint8_t flank)
             break;
     }
     if(sw != NULL){
-        //recursionBreaker(sw, flank);
-    	if(flank)
-    		switchOn(sw);
-    	else
-    		switchOff(sw);
+        if(flank)
+            switchOn(sw);
+        else
+            switchOff(sw);
     }
 }
 
 void sanityCheckGS1(uint8_t event)
 {
-	if(event != NO_EVENT)
-		return;
-	if(sw_getState(toSwitchPtr(&sw_centerTarget)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_centerTarget));
-	if(sw_getState(toSwitchPtr(&sw_targetE)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_targetE));
-	if(sw_getState(toSwitchPtr(&sw_targetZ)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_targetZ));
-	if(sw_getState(toSwitchPtr(&sw_centerJetBumper)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_centerJetBumper));
-	if(sw_getState(toSwitchPtr(&sw_rightJetBumper)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_rightJetBumper));
-	if(sw_getState(toSwitchPtr(&sw_leftJetBumper)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_leftJetBumper));
-	if(sw_getState(toSwitchPtr(&sw_centerTopRollOver)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_centerTopRollOver));
-	if(sw_getState(toSwitchPtr(&sw_rightTopRollOver)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_rightTopRollOver));
-	if(sw_getState(toSwitchPtr(&sw_leftTopRollOver)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_leftTopRollOver));
-	if(sw_getState(toSwitchPtr(&sw_leftTopTarget)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_leftTopTarget));
-	if(sw_getState(toSwitchPtr(&sw_leftBottomRollOverIn)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_leftBottomRollOverIn));
-	if(sw_getState(toSwitchPtr(&sw_leftBottomRollOverOut)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_leftBottomRollOverOut));
-	if(sw_getState(toSwitchPtr(&sw_leftRightTopRollOverButton)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_leftRightTopRollOverButton));
-	if(sw_getState(toSwitchPtr(&sw_centerTopRollOverButton)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_centerTopRollOverButton));
-	if(sw_getState(toSwitchPtr(&sw_leftLaneRollOver)) == SWITCH_STATE_CLOSED){
-		switchOff(toSwitchPtr(&sw_leftLaneRollOver));
-		switchOff(toSwitchPtr(&sw_leftLaneRollOver2));
-	}
-	if(sw_getState(toSwitchPtr(&sw_spinner)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_spinner));
-}
+    if(event != NO_EVENT)
+        return;
+    if(sw_getState(toSwitchPtr(&sw_centerTarget)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_centerTarget));
+    if(sw_getState(toSwitchPtr(&sw_targetE)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_targetE));
+    if(sw_getState(toSwitchPtr(&sw_targetZ)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_targetZ));
+    if(sw_getState(toSwitchPtr(&sw_centerJetBumper)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_centerJetBumper));
+    if(sw_getState(toSwitchPtr(&sw_rightJetBumper)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_rightJetBumper));
+    if(sw_getState(toSwitchPtr(&sw_leftJetBumper)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_leftJetBumper));
+    if(sw_getState(toSwitchPtr(&sw_centerTopRollOver)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_centerTopRollOver));
+    if(sw_getState(toSwitchPtr(&sw_rightTopRollOver)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_rightTopRollOver));
+    if(sw_getState(toSwitchPtr(&sw_leftTopRollOver)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_leftTopRollOver));
+    if(sw_getState(toSwitchPtr(&sw_leftTopTarget)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_leftTopTarget));
+    if(sw_getState(toSwitchPtr(&sw_leftBottomRollOverIn)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_leftBottomRollOverIn));
+    if(sw_getState(toSwitchPtr(&sw_leftBottomRollOverOut)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_leftBottomRollOverOut));
+    if(sw_getState(toSwitchPtr(&sw_leftRightTopRollOverButton)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_leftRightTopRollOverButton));
+    if(sw_getState(toSwitchPtr(&sw_centerTopRollOverButton)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_centerTopRollOverButton));
+    if(sw_getState(toSwitchPtr(&sw_leftLaneRollOver)) == SWITCH_STATE_CLOSED){
+        switchOff(toSwitchPtr(&sw_leftLaneRollOver));
+        switchOff(toSwitchPtr(&sw_leftLaneRollOver2));
+    }
+    if(sw_getState(toSwitchPtr(&sw_spinner)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_spinner));
+    }
 
 void sanityCheckGS2(uint8_t event)
 {
-	if(event != NO_EVENT)
-		return;
-	if(sw_getState(toSwitchPtr(&sw_shooter)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_shooter));
-	if(sw_getState(toSwitchPtr(&sw_outhole)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_outhole));
-	if(sw_getState(toSwitchPtr(&sw_creditButton)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_creditButton));
-	if(sw_getState(toSwitchPtr(&sw_targetC)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_targetC));
-	if(sw_getState(toSwitchPtr(&sw_targetT)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_targetT));
-	if(sw_getState(toSwitchPtr(&sw_rightBottomRollOverIn)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_rightBottomRollOverIn));
-	if(sw_getState(toSwitchPtr(&sw_rightBottomRollOverOut)) == SWITCH_STATE_CLOSED)
-		switchOff(toSwitchPtr(&sw_rightBottomRollOverOut));
+    if(event != NO_EVENT)
+        return;
+    if(sw_getState(toSwitchPtr(&sw_shooter)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_shooter));
+    if(sw_getState(toSwitchPtr(&sw_outhole)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_outhole));
+    if(sw_getState(toSwitchPtr(&sw_creditButton)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_creditButton));
+    if(sw_getState(toSwitchPtr(&sw_targetC)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_targetC));
+    if(sw_getState(toSwitchPtr(&sw_targetT)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_targetT));
+    if(sw_getState(toSwitchPtr(&sw_rightBottomRollOverIn)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_rightBottomRollOverIn));
+    if(sw_getState(toSwitchPtr(&sw_rightBottomRollOverOut)) == SWITCH_STATE_CLOSED)
+        switchOff(toSwitchPtr(&sw_rightBottomRollOverOut));
 }
 
 int main(void)

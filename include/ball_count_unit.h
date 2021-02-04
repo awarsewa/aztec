@@ -28,6 +28,4 @@ extern trigger ballCountUnitResetTrigger;
 void ballCountUnitStepUpTriggerFunc(uint8_t state);
 void ballCountUnitResetTriggerFunc(uint8_t state);
 
-extern void recursionBreaker(struct mb* sw, uint8_t state);
-
 #endif

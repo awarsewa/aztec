@@ -45,8 +45,8 @@ void ballCountUnitStepUpTriggerFunc(uint8_t state)
     switch(ballCountUnitDiskPos){
         case BALL_COUNT_UNIT_DISK_POS_2:
             outRegs[BALL_COUNT_UNIT_REGISTER].data |= (1 << BALL_IN_PLAY_1_2);
-            recursionBreaker(toSwitchPtr(&sw_ballCountUnitZeroBk), 0);
-            recursionBreaker(toSwitchPtr(&sw_ballCountUnitZeroBk2), 0);
+            switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk));
+            switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk2));
             break;
         case BALL_COUNT_UNIT_DISK_POS_3:
             outRegs[BALL_COUNT_UNIT_REGISTER].data |= (1 << BALL_IN_PLAY_3);
@@ -69,13 +69,13 @@ void ballCountUnitStepUpTriggerFunc(uint8_t state)
         default:
             break;
     }
-		
+
     shiftReg_write(outRegs[BALL_COUNT_UNIT_REGISTER]);
     shiftReg_store(outRegs[BALL_COUNT_UNIT_REGISTER]);
     
     // Ball count unit E.O.S.
-    recursionBreaker(toSwitchPtr(&sw_ballCountUnitEOS), 1);
-    recursionBreaker(toSwitchPtr(&sw_ballCountUnitEOS), 0);
+    switchOn(toSwitchPtr(&sw_ballCountUnitEOS));
+    switchOff(toSwitchPtr(&sw_ballCountUnitEOS));
 }
 
 void ballCountUnitResetTriggerFunc(uint8_t state)
@@ -86,13 +86,13 @@ void ballCountUnitResetTriggerFunc(uint8_t state)
     ballCountUnitDiskPos = BALL_COUNT_UNIT_DISK_POS_1;
 
     switchOff(toSwitchPtr(&sw_3_5_ballAdj));
-
-	recursionBreaker(toSwitchPtr(&sw_ballCountUnitZeroBk), 1);
-	recursionBreaker(toSwitchPtr(&sw_ballCountUnitZeroBk2), 1);
+    
+	switchOn(toSwitchPtr(&sw_ballCountUnitZeroBk));
+	switchOff(toSwitchPtr(&sw_ballCountUnitZeroBk2));
 
 	if(relay_gameOverTrip.holdCount)
 		relay_gameOverTrip.holdCount--;
-	recursionBreaker(toSwitchPtr(&relay_gameOverTrip), 0);
+	switchOff(toSwitchPtr(&relay_gameOverTrip));
 
 	outRegs[BALL_COUNT_UNIT_REGISTER].data &= ~(BALL_COUNT_UNIT_REG_MASK);
 	shiftReg_write(outRegs[BALL_COUNT_UNIT_REGISTER]);

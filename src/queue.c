@@ -24,12 +24,12 @@ void queue_push(queue *q, uint8_t *data)
     if(q->length < q->capacity){
         for(i = q->tail; i < (q->tail + q->entrySize); i++){
             q->data[i] = data[j];
-			j++;
-		}
-        
+            j++;
+        }
+
         q->tail = (q->tail + q->entrySize);
-		if(q->tail >= (q->capacity * q->entrySize))
-			q->tail = 0; 
+        if(q->tail >= (q->capacity * q->entrySize))
+            q->tail = 0; 
 
         ++(q->length);
     }
@@ -37,18 +37,18 @@ void queue_push(queue *q, uint8_t *data)
 
 void queue_pop(queue *q, uint8_t *data)
 {
-	uint16_t i, j = 0;
-    
+    uint16_t i, j = 0;
+
     if(q->length){
         for(i = q->head; i < (q->head + q->entrySize); i++){
             data[j] = q->data[i];
-			j++;
-		}
+            j++;
+        }
         q->head = (q->head + q->entrySize);
-		if(q->head >= (q->capacity * q->entrySize))
-			q->head = 0;
+        if(q->head >= (q->capacity * q->entrySize))
+            q->head = 0;
         --(q->length);
-        
+
     }    
 }
 

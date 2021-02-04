@@ -24,6 +24,4 @@ extern trigger playerUnitResetTrigger;
 void playerUnitStepUpTriggerFunc(uint8_t state);
 void playerUnitResetTriggerFunc(uint8_t state);
 
-extern void recursionBreaker(struct mb* sw, uint8_t state);
-
 #endif

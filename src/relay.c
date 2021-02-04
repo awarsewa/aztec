@@ -22,101 +22,6 @@ inline void relay_init(void)
         outRegs[i].data = 0x00;
 }
 
-/*
-void switchOn(struct mb* sw, struct mb** on, struct mb** off, uint8_t* n_on, uint8_t* n_off, uint8_t* traceFlag)
-{
-    relay *rel;
-    trigger *trig;
-    
-    *on = *off = NULL;
-    *n_on = *n_off = *traceFlag = 0;
-    
-    if(sw == NULL)
-        return;
-    
-    switch(sw_getType(sw)){
-        case RELAY_TYPE_REAL_COIL:
-        case RELAY_TYPE_SIMULATED:
-            rel = toRelayPtr(sw);
-            // Nothing happens if relay is already on
-            if(rel_getState(rel) == RELAY_STATE_ON)
-                break;
-            else {
-                // Nothing happens if relay is shut down by tilt or game over re.
-                if(tiltFlag && rel_isOffOnTilt(rel))
-                    break;
-                if(gameOverFlag && rel_isOffOnGameOver(rel))
-                    break;
-                if(resetFlag && rel_isOffOnGameOver(rel))
-                    break;
-                
-                // Set relay state to on
-                rel_setState(rel, RELAY_STATE_ON);
-                
-                // Power relay if it has a real counterpart
-                if(rel_isRealCoil(rel)){
-                    outRegs[rel_getOutReg(rel)].data |= (1 << rel_getOutPin(rel));
-                    shiftReg_write(outRegs[rel_getOutReg(rel)]);
-                    shiftReg_store(outRegs[rel_getOutReg(rel)]);
-                }
-                // Switch on all the relay's switches
-                *on = rel->switches[0];
-                *n_on = rel_nSwitches(rel);
-            }
-            break;
-        case SWITCH_TYPE_MAKE:
-            // nothing happens if switch was already on
-            if(sw_getState(sw) == SWITCH_STATE_OPEN){
-                
-                sw_setState(sw, SWITCH_STATE_CLOSED);
-                //if switch sources power, trace its connection to other switches
-                if(sw_isPowered(sw)){
-                    *on = sw->connected[0];
-                    *n_on = sw_getNConnected(sw);
-                    *traceFlag = 1;
-                }
-            }
-            break;
-            
-        case SWITCH_TYPE_BREAK:
-            if(sw_getState(sw) == SWITCH_STATE_CLOSED){
-                sw_setState(sw, SWITCH_STATE_OPEN);
-                if(sw_isPowered(sw)){
-                    *off = sw->connected[0];
-                    *n_off = sw_getNConnected(sw);
-                    *traceFlag = 1;
-                }
-            }
-            break;
-            
-        case SWITCH_TYPE_MAKE_BREAK:
-            if(sw_getState(sw) == SWITCH_STATE_DEFAULT){
-                sw_setState(sw, SWITCH_STATE_ALTERNATE);
-                if(sw_isPowered(sw)){
-                    *off = sw->connected[0];
-                    *n_off = sw_getNConnected(sw);
-                    *on = sw->connected[sw_getNConnected(sw)];
-                    *n_on = sw_getNAlternate(sw);
-                    *traceFlag = 1;
-                }
-            }
-            break;
-            
-            // Trigger switches call a function (i.e. to start/stop the score motor)
-        case SWITCH_TYPE_TRIGGER:
-            trig = toTriggerPtr(sw);
-            if(sw_getState(sw) == TRIGGER_STATE_OFF){
-                sw_setState(sw, TRIGGER_STATE_ON);
-                trig->triggerFunc(TRIGGER_STATE_ON);
-            }
-            break;
-            
-        default:
-            break;
-    }
-}
-*/
-
 void switchOn(struct mb* sw)
  {
     relay *rel = NULL;
@@ -205,93 +110,6 @@ void switchOn(struct mb* sw)
     }
 }
 
-/*
-void switchOff(struct mb* sw, struct mb** on, struct mb** off, uint8_t* n_on, uint8_t* n_off, uint8_t* traceFlag)
-{
-    relay  *rel;
-    trigger* trig;
-    
-    *on = *off = NULL;
-    *n_on = *n_off = *traceFlag = 0;
-    
-    if(sw == NULL)
-        return;
-    
-    switch(sw_getType(sw)){
-        case RELAY_TYPE_REAL_COIL:
-        case RELAY_TYPE_SIMULATED:
-            rel = toRelayPtr(sw);
-            if(rel_getState(rel) == RELAY_STATE_OFF)
-                break;
-            
-            if((gameOverFlag && rel_isOffOnGameOver(rel)) ||
-               (tiltFlag && rel_isOffOnTilt(rel)) ||
-               (resetFlag && rel_isOffOnGameOver(rel)) ||
-               (!rel_getHoldCount(rel)))
-            {
-                rel_setState(rel, RELAY_STATE_OFF);
-                if(rel_isRealCoil(rel)){
-                    outRegs[rel_getOutReg(rel)].data &= ~(1 << (rel_getOutPin(rel)));
-                    shiftReg_write(outRegs[rel_getOutReg(rel)]);
-                    shiftReg_store(outRegs[rel_getOutReg(rel)]);
-                    //queue_push(&turnoffQ, &(rel->info2));
-                }
-                *off = rel->switches[0];
-                *n_off = rel_nSwitches(rel);
-            }
-            break;
-            
-        case SWITCH_TYPE_MAKE:
-            // nothing happens if switch was already off
-            if(sw_getState(sw) == SWITCH_STATE_CLOSED){
-                sw_setState(sw, SWITCH_STATE_OPEN);
-                //if switch sources power, trace its connection to other switches
-                if(sw_isPowered(sw)){
-                    *off = sw->connected[0];
-                    *n_off = sw_getNConnected(sw);
-                    *traceFlag = 1;
-                }
-            }
-            break;
-            
-        case SWITCH_TYPE_BREAK:
-            if(sw_getState(sw) == SWITCH_STATE_OPEN){
-                sw_setState(sw, SWITCH_STATE_CLOSED);
-                if(sw_isPowered(sw)){
-                    *on = sw->connected[0];
-                    *n_on = sw_getNConnected(sw);
-                    *traceFlag = 1;
-                }
-            }
-            break;
-            
-        case SWITCH_TYPE_MAKE_BREAK:
-            if(sw_getState(sw) == SWITCH_STATE_ALTERNATE){
-                sw_setState(sw, SWITCH_STATE_DEFAULT);
-                if(sw_isPowered(sw)){
-                    *off = sw->connected[sw_getNConnected(sw)];
-                    *n_off = sw_getNAlternate(sw);
-                    *on = sw->connected[0];
-                    *n_on = sw_getNConnected(sw);
-                    *traceFlag = 1;
-                }
-            }
-            break;
-            
-        case SWITCH_TYPE_TRIGGER:
-            trig = toTriggerPtr(sw);
-            if(sw_getState(sw) == TRIGGER_STATE_ON){
-                sw_setState(sw, TRIGGER_STATE_OFF);
-                trig->triggerFunc(TRIGGER_STATE_OFF);
-            }
-            break;
-            
-        default:
-            break;
-    }
-}
-*/
-
 
 void switchOff(struct mb* sw)
 {
@@ -373,60 +191,6 @@ void switchOff(struct mb* sw)
     }
 }
 
-/*
-void switchTraceOn(struct mb* sw, struct mb** on, uint8_t* n_on, uint8_t* traceFlag)
-{
-    relay* rel;
-    
-    *on = NULL;
-    *n_on = *traceFlag = 0;
-    
-    if(sw == NULL)
-        return;
-    
-    switch(sw_getType(sw)){
-        case RELAY_TYPE_REAL_COIL:
-        case RELAY_TYPE_SIMULATED:
-            rel = toRelayPtr(sw);
-            rel->holdCount++;
-            
-            *on = sw;
-            *n_on = 1;
-            
-            break;
-        case SWITCH_TYPE_TRIGGER:
-            *on = sw;
-            *n_on = 1;
-            break;
-        case SWITCH_TYPE_MAKE:
-        case SWITCH_TYPE_BREAK:
-            sw->holdCount++;
-            sw_powerOn(sw);
-            if(sw_getState(sw) == SWITCH_STATE_CLOSED){
-                *on = sw->connected[0];
-                *n_on = sw_getNConnected(sw);
-                *traceFlag = 1;
-            }
-            break;
-        case SWITCH_TYPE_MAKE_BREAK:
-            sw->holdCount++;
-            sw_powerOn(sw);
-            *traceFlag = 1;
-            if(sw_getState(sw) == SWITCH_STATE_DEFAULT){
-                *on = sw->connected[0];
-                *n_on = sw_getNConnected(sw);
-            } else {
-                *on = sw->connected[sw_getNConnected(sw)];
-                *n_on = sw_getNAlternate(sw);
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-*/
-
 
 void switchTraceOn(struct mb* sw)
 {
@@ -448,88 +212,29 @@ void switchTraceOn(struct mb* sw)
             break;
         case SWITCH_TYPE_MAKE:
         case SWITCH_TYPE_BREAK:
-        	if(sw->holdCount){
-        		sw->holdCount++;
-        	} else {
-        		sw->holdCount++;
-        		sw_powerOn(sw);
-				if(sw_getState(sw) == SWITCH_STATE_CLOSED){
-					for(i = 0; i < sw_getNConnected(sw); i++)
-						switchTraceOn(sw->connected[i]);
-				}
-        	}
-            break;
-        case SWITCH_TYPE_MAKE_BREAK:
-        	if(sw->holdCount){
-        		sw->holdCount++;
-        	} else {
-        		sw->holdCount++;
-        		sw_powerOn(sw);
-				if(sw_getState(sw) == SWITCH_STATE_DEFAULT){
-					for(i = 0; i < sw_getNConnected(sw); i++)
-						switchTraceOn(sw->connected[i]);
-				} else {
-					for(i = sw_getNConnected(sw); i < (sw_getNConnected(sw) + sw_getNAlternate(sw)); i++)
-						switchTraceOn(sw->connected[i]);
-				}
-        	}
-			break;
-        default:
-            break;
-    }
-}
-
-/*
-void switchTraceOff(struct mb* sw, struct mb** off, uint8_t* n_off, uint8_t* traceFlag)
-{
-    relay* rel;
-    
-    *off = NULL;
-    *n_off = *traceFlag = 0;
-    
-    if(sw == NULL)
-        return;
-    
-    switch(sw_getType(sw)){
-        case RELAY_TYPE_REAL_COIL:
-        case RELAY_TYPE_SIMULATED:
-            rel = toRelayPtr(sw);
-            if(rel_getHoldCount(rel))
-                rel->holdCount--;
-            *off = sw;
-            *n_off = 1;
-            break;
-        case SWITCH_TYPE_TRIGGER:
-            *off = sw;
-            *n_off = 1;
-            break;
-        case SWITCH_TYPE_MAKE:
-        case SWITCH_TYPE_BREAK:
-            if(sw->holdCount)
-                sw->holdCount--;
-            
-            if(!sw->holdCount){
-                sw_powerOff(sw);
+            if(sw->holdCount){
+                sw->holdCount++;
+            } else {
+                sw->holdCount++;
+                sw_powerOn(sw);
                 if(sw_getState(sw) == SWITCH_STATE_CLOSED){
-                    *off = sw->connected[0];
-                    *n_off = sw_getNConnected(sw);
-                    *traceFlag = 1;
+                    for(i = 0; i < sw_getNConnected(sw); i++)
+                        switchTraceOn(sw->connected[i]);
                 }
             }
             break;
         case SWITCH_TYPE_MAKE_BREAK:
-            if(sw->holdCount)
-                sw->holdCount--;
-            
-            if(!sw->holdCount){
-                sw_powerOff(sw);
-                *traceFlag = 1;
+            if(sw->holdCount){
+                sw->holdCount++;
+            } else {
+                sw->holdCount++;
+                sw_powerOn(sw);
                 if(sw_getState(sw) == SWITCH_STATE_DEFAULT){
-                    *off = sw->connected[0];
-                    *n_off = sw_getNConnected(sw);
+                    for(i = 0; i < sw_getNConnected(sw); i++)
+                        switchTraceOn(sw->connected[i]);
                 } else {
-                    *off = sw->connected[sw_getNConnected(sw)];
-                    *n_off = sw_getNAlternate(sw);
+                    for(i = sw_getNConnected(sw); i < (sw_getNConnected(sw) + sw_getNAlternate(sw)); i++)
+                        switchTraceOn(sw->connected[i]);
                 }
             }
             break;
@@ -537,7 +242,6 @@ void switchTraceOff(struct mb* sw, struct mb** off, uint8_t* n_off, uint8_t* tra
             break;
     }
 }
-*/
 
 
 void switchTraceOff(struct mb* sw)
@@ -567,10 +271,10 @@ void switchTraceOff(struct mb* sw)
             if(!sw->holdCount){
                 sw_powerOff(sw);
 
-				if(sw_getState(sw) == SWITCH_STATE_CLOSED){
-					for(i = 0; i < sw_getNConnected(sw); i++)
-						switchTraceOff(sw->connected[i]);
-				}
+                if(sw_getState(sw) == SWITCH_STATE_CLOSED){
+                    for(i = 0; i < sw_getNConnected(sw); i++)
+                        switchTraceOff(sw->connected[i]);
+                }
             }
             break;
         case SWITCH_TYPE_MAKE_BREAK:
@@ -592,4 +296,3 @@ void switchTraceOff(struct mb* sw)
             break;
     }
 }
-

@@ -32,15 +32,13 @@ struct mb2 sw_scoreMotorCAM_IndexD = {  SWITCH_TYPE_MAKE_BREAK | SWITCH_STATE_AL
 // CAM1
 struct mb1 sw_scoreMotorCAM_1A = { SWITCH_TYPE_MAKE | SWITCH_STATE_OPEN | SWITCH_POWERED, 1, 1, { toSwitchPtr(&sw_relayZC) } };
 struct mb2 sw_scoreMotorCAM_1B = { SWITCH_TYPE_MAKE | SWITCH_STATE_OPEN | SWITCH_NOT_POWERED, 2, 0, 
-																	{ toSwitchPtr(&relay_dummy), toSwitchPtr(&sw_relayResetF) } };
+                                 { toSwitchPtr(&relay_dummy), toSwitchPtr(&sw_relayResetF) } };
 struct mb4 sw_scoreMotorCAM_1C = { SWITCH_TYPE_MAKE | SWITCH_STATE_OPEN | SWITCH_NOT_POWERED, 4, 0,
                                     {   toSwitchPtr(&sw_playerUnitD), toSwitchPtr(&sw_playerUnitC),
                                         toSwitchPtr(&sw_playerUnitB), toSwitchPtr(&sw_coinUnitWiperD6_1) } };
-		
+
 struct mb1 sw_scoreMotorCAM_1D = { SWITCH_TYPE_MAKE | SWITCH_STATE_OPEN | SWITCH_POWERED, 1, 1, { toSwitchPtr(&sw_relayCenterTargetA) } };
-struct mb3 sw_scoreMotorCAM_1E = { SWITCH_TYPE_MAKE_BREAK | SWITCH_STATE_DEFAULT | SWITCH_POWERED, 2 | (1 << SWITCH_INDEX_ALTERNATE), 1,
-	 																{ toSwitchPtr(&relay_dummy), toSwitchPtr(&sw_relayBallIndexE),
-																	  toSwitchPtr(&relay_dummy) } };
+struct mb3 sw_scoreMotorCAM_1E = { SWITCH_TYPE_MAKE_BREAK | SWITCH_STATE_DEFAULT | SWITCH_POWERED, 2 | (1 << SWITCH_INDEX_ALTERNATE), 1, { toSwitchPtr(&relay_dummy), toSwitchPtr(&sw_relayBallIndexE),  toSwitchPtr(&relay_dummy) } };
 // CAM2
 struct mb1 sw_scoreMotorCAM_2A = { SWITCH_TYPE_MAKE | SWITCH_STATE_OPEN | SWITCH_POWERED, 1, 1, { toSwitchPtr(&sw_relayTC) } };
 struct mb1 sw_scoreMotorCAM_2B = { SWITCH_TYPE_MAKE | SWITCH_STATE_OPEN | SWITCH_NOT_POWERED, 1, 0, { toSwitchPtr(&sw_relayPlayerResetC) } };
@@ -239,23 +237,23 @@ void scoreMotorTurn()
             switchOn(toSwitchPtr(&(scoreMotor.impulse)));
             break;
         case MOTOR_DISK_POS_CAM_1:
-        	switchOff(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOff(toSwitchPtr(&(scoreMotor.impulse)));
             switchOn(toSwitchPtr(&(scoreMotor.CAM_1)));
             break;
         case MOTOR_DISK_POS_CAM_1_OFF:
-        	switchOn(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOn(toSwitchPtr(&(scoreMotor.impulse)));
             switchOff(toSwitchPtr(&(scoreMotor.CAM_1)));
             break;
         case MOTOR_DISK_POS_CAM_2:
-        	switchOff(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOff(toSwitchPtr(&(scoreMotor.impulse)));
             switchOn(toSwitchPtr(&(scoreMotor.CAM_2)));
             break;
         case MOTOR_DISK_POS_CAM_2_OFF:
-        	switchOn(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOn(toSwitchPtr(&(scoreMotor.impulse)));
             switchOff(toSwitchPtr(&(scoreMotor.CAM_2)));
             break;
         case MOTOR_DISK_POS_CAM_3:
-        	switchOff(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOff(toSwitchPtr(&(scoreMotor.impulse)));
             switchOn(toSwitchPtr(&(scoreMotor.CAM_3)));
             break;
         case MOTOR_DISK_POS_CAM_3_OFF:
@@ -263,15 +261,15 @@ void scoreMotorTurn()
             switchOn(toSwitchPtr(&(scoreMotor.impulse)));
             break;
         case MOTOR_DISK_POS_CAM_4:
-        	switchOff(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOff(toSwitchPtr(&(scoreMotor.impulse)));
             switchOn(toSwitchPtr(&(scoreMotor.CAM_4)));
             break;
         case MOTOR_DISK_POS_CAM_4_OFF:
-        	switchOn(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOn(toSwitchPtr(&(scoreMotor.impulse)));
             switchOff(toSwitchPtr(&(scoreMotor.CAM_4)));
             break;
         case MOTOR_DISK_POS_CAM_5:
-        	switchOff(toSwitchPtr(&(scoreMotor.impulse)));
+            switchOff(toSwitchPtr(&(scoreMotor.impulse)));
             switchOn(toSwitchPtr(&(scoreMotor.CAM_5)));
             break;
         case MOTOR_DISK_POS_CAM_5_OFF:

@@ -28,21 +28,21 @@ void coinUnitStepUpTriggerFunc(uint8_t state)
     switch(coinUnitDiskPos){
         case COIN_UNIT_DISK_POS_1:
         	outRegs[COIN_UNIT_REGISTER].data |= (1 << CAN_PLAY_1_2);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperD6_1), 0);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperD6_2), 1);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperC8_1), 1);
+            switchOff(toSwitchPtr(&sw_coinUnitWiperD6_1));
+            switchOn(toSwitchPtr(&sw_coinUnitWiperD6_2));
+            switchOn(toSwitchPtr(&sw_coinUnitWiperC8_1));
             break;
         case COIN_UNIT_DISK_POS_2:
         	outRegs[COIN_UNIT_REGISTER].data |= (1 << CAN_PLAY_3);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperD6_2), 0);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperD6_3), 1);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperC8_2), 1);
+            switchOff(toSwitchPtr(&sw_coinUnitWiperD6_2));
+            switchOn(toSwitchPtr(&sw_coinUnitWiperD6_3));
+            switchOn(toSwitchPtr(&sw_coinUnitWiperC8_2));
             break;
         case COIN_UNIT_DISK_POS_3:
         	outRegs[COIN_UNIT_REGISTER].data |= (1 << CAN_PLAY_4);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperD6_3), 0);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitWiperC8_3), 1);
-            recursionBreaker(toSwitchPtr(&sw_coinUnitLastPosBk), 1);
+            switchOff(toSwitchPtr(&sw_coinUnitWiperD6_3));
+            switchOn(toSwitchPtr(&sw_coinUnitWiperC8_3));
+            switchOn(toSwitchPtr(&sw_coinUnitLastPosBk));
             break;
         default:
             break;

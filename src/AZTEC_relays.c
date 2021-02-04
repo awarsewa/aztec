@@ -377,7 +377,6 @@ void gameOverATriggerFunc(uint8_t state)
         gameOverFlag = 1;
         for(i = 0; i < NUM_RED_RELAYS; i++){
             if(rel_isOffOnGameOver(red_relays[i]))
-                //recursionBreaker(toSwitchPtr(red_relays[i]), 0);
             	switchOff(toSwitchPtr(red_relays[i]));
         }
     } else {
@@ -410,40 +409,38 @@ relay5 relay_gameOver = {
 
 void gameOverTripATriggerFunc(uint8_t state)
 {
-		if(state == TRIGGER_STATE_OFF)
-			return;
-		
-		//recursionBreaker(toSwitchPtr(&relay_gameOver), 1);
-		switchOn(toSwitchPtr(&relay_gameOver));
+    if(state == TRIGGER_STATE_OFF)
+        return;
+
+    switchOn(toSwitchPtr(&relay_gameOver));
 }
 
 trigger trig_relayGameOverTripA = { SWITCH_TYPE_TRIGGER | TRIGGER_STATE_OFF, &gameOverTripATriggerFunc };
 
 relay1 relay_gameOverTrip = {
-		RELAY_TYPE_SIMULATED | RELAY_STATE_OFF | (1 << RELAY_INDEX_SWITCHES),
-		(0 << RELAY_INDEX_REGISTER) | (0 << RELAY_INDEX_PIN),
-		0 + RELAY_OFF_ON_GAME_OVER,
-		{
-            toSwitchPtr(&trig_relayGameOverTripA)
-		}
+    RELAY_TYPE_SIMULATED | RELAY_STATE_OFF | (1 << RELAY_INDEX_SWITCHES),
+    (0 << RELAY_INDEX_REGISTER) | (0 << RELAY_INDEX_PIN),
+    0 + RELAY_OFF_ON_GAME_OVER,
+    {
+        toSwitchPtr(&trig_relayGameOverTripA)
+    }
 };
 
 void gameOverLatchATriggerFunc(uint8_t state)
 {
-		if(state == TRIGGER_STATE_OFF)
-			return;
-		
-		//recursionBreaker(toSwitchPtr(&relay_gameOver), 0);
-		switchOff(toSwitchPtr(&relay_gameOver));
+    if(state == TRIGGER_STATE_OFF)
+        return;
+
+    switchOff(toSwitchPtr(&relay_gameOver));
 }
 trigger trig_relayGameOverLatchA = { SWITCH_TYPE_TRIGGER | TRIGGER_STATE_OFF, &gameOverLatchATriggerFunc };
 relay1 relay_gameOverLatch = {
-		RELAY_TYPE_SIMULATED | RELAY_STATE_OFF | (1 << RELAY_INDEX_SWITCHES),
-		(0 << RELAY_INDEX_REGISTER) | (0 << RELAY_INDEX_PIN),
-		0,
-		{
-            toSwitchPtr(&trig_relayGameOverLatchA)
-		}
+    RELAY_TYPE_SIMULATED | RELAY_STATE_OFF | (1 << RELAY_INDEX_SWITCHES),
+    (0 << RELAY_INDEX_REGISTER) | (0 << RELAY_INDEX_PIN),
+    0,
+    {
+        toSwitchPtr(&trig_relayGameOverLatchA)
+    }
 };
 
 
@@ -472,7 +469,6 @@ void resetDTriggerFunc(uint8_t state)
         resetFlag = 0;
         for(i = 0; i < NUM_RED_RELAYS; i++){
             if(rel_isOffOnGameOver(red_relays[i]) && rel_getHoldCount(red_relays[i]))
-                //recursionBreaker(toSwitchPtr(red_relays[i]), 1);
             	switchOn(toSwitchPtr(red_relays[i]));
         }
     }
