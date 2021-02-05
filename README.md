@@ -7,7 +7,7 @@ Aztec is a Williams® pinball machine for 4 players. Check it out on the [Intern
 ### The project
 It would have been rather expensive and difficult to get original spare parts for or replicas of all the missing components. So why not replace aztec's brain with a microcontroller? The looks and feel of the machine would still be the same. Only what's under the hood would be slightly more modern. Maybe this is a sacrilege for real pinball lovers... I have a feeling it is. Like an inverse Frankenstein - pretty on the outside. But I already did it, so there's no way back and no repentance. If you want to know how I've done it, check out the repository [wiki](https://github.com/awarsewa/aztec/wiki) (under construction).
 
-## What's in this repository
+### What's in this repository?
 The source code running on the microcontroller and the PCB schematics. Basically everything you need to do something similar. However, without any documentation its pretty hard to understand. So if you're interested, be patient and wait until the wiki is filled with content. 
 
 Have fun with your projects!
