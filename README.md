@@ -1,7 +1,7 @@
 # aztec
 Bringing a 1976 pinball machine back to life.
 
-[:broccoli: Wiki](https://github.com/awarsewa/aztec/wiki)
+[:corn: Wiki](https://github.com/awarsewa/aztec/wiki)
 
 ### The machine
 Aztec is a Williams® pinball machine for 4 players. Check it out on the [Internet Pinball Machine Database](https://www.ipdb.org/machine.cgi?gid=119). There is also a [solid state version](https://www.ipdb.org/machine.cgi?gid=4828) of the same machine. Mine is from the electromechanical series -- and this is where the fun starts. Of course it wasn't functional. The entire cabinet had been completely gutted, with only a few tilt mechanisms left dangling about. While most of the machine's control logic was gone, the playfield and the backbox were still mostly intact. Repairing it seemed tough, but since it's cool to have your own pinball machine, I decided to give it a shot.
