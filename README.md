@@ -12,4 +12,5 @@ It would have been rather expensive and difficult to get original spare parts fo
 ### What's in this repository?
 The source code running on the microcontroller and the PCB schematics. Basically everything you need to do something similar. However, without any documentation its pretty hard to understand. So if you're interested, be patient and wait until the wiki is filled with content. 
 
-Have fun with your projects!
+### Getting involved
+In case you have questions or suggestions, need support or simply want to get in touch, feel free to [send me a message](mailto:alexander.warsewa@posteo.net?subject=[Aztec]).
