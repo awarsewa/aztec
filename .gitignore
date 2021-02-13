@@ -1,6 +1,7 @@
 #Other
 .DS_Store
 *.lss
+.ipynb*
 
 # Prerequisites
 *.d
