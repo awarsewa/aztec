@@ -1,0 +1,4 @@
+(sym_lib_table
+  (lib (name relays_board_v1_0-eagle-import)(type Legacy)(uri ${KIPRJMOD}/relays_board_v1_0-eagle-import.lib)(options "")(descr ""))
+  (lib (name relay_board_v1_0-rescue)(type Legacy)(uri ${KIPRJMOD}/relay_board_v1_0-rescue.lib)(options "")(descr ""))
+)
