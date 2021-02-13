@@ -1,9 +1,0 @@
-EESchema-DOCLIB  Version 2.0
-#
-$CMP CD4532B
-D CMOS 8-bit priority encoder
-K CMOS 8-bit priority encoder
-F http://www.ti.com/lit/gpn/cd4532b
-$ENDCMP
-#
-#End Doc Library
